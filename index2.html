@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Banni</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <style>
+      body {
+		overflow-y:scroll;
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+    </style>
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="#">Metastruct BANNI Viewer</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+				<button type="button" class="btn btn-primary" data-toggle="button" id="hideunband">Hide unbanned</button>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container" id="results">
+
+		 <span id="NeedJS">You need javascript to use this...</span>
+		 
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="js/jquery.js"></script>
+    <script src="js/jsbn.js"></script>
+    <script src="js/jsbn2.js"></script>
+    <script src="js/moment.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+	<script>
+	
+	var OFFSET = new BigInteger("0110000100000000",16);
+	var two = new BigInteger("2",10);
+	function ProfileURL(steamid) {
+		var profileurl = "https://steamcommunity.com/profiles/";
+		var data = steamid.split(":");
+		var steamid64 = "ERROR";
+		
+		var sX = 0;
+		var sY = new BigInteger(data[1],10);
+		var sZ = new BigInteger(data[2],10);
+
+		var result = sZ.multiply(two).add(OFFSET).add(sY);
+		
+		steamid64 = result.toString();
+		return profileurl+steamid64;
+	}
+
+	</script>	
+	
+	<script>
+		var d = new Date();
+		var now = d.getTime() / 1000;
+		
+		function getdate(sec,since) {
+			//var d = new Date(sec*1000);
+			//return d.toString();
+			//moment(sec.toString(),"X");
+			if (sec>30000000000) return since?"never":"infinite";
+			
+		 	var mom = moment.unix(sec);
+			if (since) 
+				return mom.fromNow();
+			
+			return mom.format("YYYY-MM-DD hh:mm:ss");
+		}
+		function ClickableSteamID(steamid) {
+			var sid =  $('<span />');
+				sid . text (steamid);
+				
+				sid.click(function() {
+					window.location = ProfileURL(steamid);
+				});
+				sid.css( 'cursor', 'pointer' );
+				
+			return sid;
+		}
+		var banentries = [];
+		function ToggleUnbans(reshow) {
+			for (var i = 0; i < banentries.length; i++) {
+				var entry = banentries[i];
+				var bandata = entry.data;
+				
+				if (!bandata.b || bandata.whenunban<now) {
+					if (reshow) {
+						entry.show();
+					} 
+					else {
+						entry.hide();
+					}
+				}
+			  }
+		}
+		var toggled = false; // Y U HOW DETECT TOGGLE???
+		$('#hideunband').on('click', function (event) {
+			toggled=!toggled;
+			ToggleUnbans(!toggled);
+		});
+
+		function AddBan(d,num) {
+			var name =  $('<span />');
+				name . text (d.name);
+				
+			var bannersid =  $('<span />');
+				bannersid . text (d.bannersid);
+				
+			var unbanreason =  $('<em />');
+				unbanreason . text (d.unbanreason);
+				
+			var banreason =  $('<em />');
+				banreason . text (d.banreason);
+				
+			var whenbanned =  $('<span />');
+				whenbanned . text (getdate(d.whenbanned));
+				
+			var whenunban =  $('<span />');
+				whenunban . text (getdate(d.whenunban));
+				
+			var whenunbanned =  $('<span />');
+				whenunbanned . text (getdate(d.whenunbanned));
+			
+			var entry = $('<div class="well overlay"></div>');
+			
+				var header = $('<div class="alert" />');
+				var col = "alert-info"
+				
+				if (d.b) {
+					col	= "alert-error";
+					if (d.whenunban<now) 
+					 col = "alert-warn";
+				}
+				
+				header.addClass(col);
+
+					var h4 = $('<h4 />');
+						h4.append(ClickableSteamID(d.sid).text(d.name));
+					header.append(h4);
+					
+					header.append(ClickableSteamID(d.sid));
+					
+					header.append($('<span />').text(" (Banned by "));
+						
+						var bannersid = ClickableSteamID(d.bannersid);
+						header.append(bannersid);
+					
+						header.append($('<span />').text(")"));
+				entry.append(header);
+				
+				entry.append($('<span />') . text (getdate(d.whenbanned))		.addClass("label").addClass("label-important")	.css('margin-right',5));
+				entry.append($('<span />') . text (getdate(d.whenbanned,true))		.addClass("label").addClass("label-important")	.css('margin-right',5));
+				entry.append($('<br />'));
+				entry.append($('<span />') . text (getdate(d.whenunban))		.addClass("label").addClass("label-success").css('margin-right',5));
+				entry.append($('<span />') . text (getdate(d.whenunban,true))		.addClass("label").addClass("label-success").css('margin-right',5));
+				entry.append($('<br />'));
+				if (!d.b) entry.append($('<span />') . text (getdate(d.whenunbanned))	.addClass("label").addClass("label-info")	.css('margin-right',5));
+				if (!d.b) entry.append($('<span />') . text (getdate(d.whenunbanned,true))	.addClass("label").addClass("label-info")	.css('margin-right',5));
+				
+			
+				entry.append($('<h6 />').text("Length"));
+				
+				entry.append($('<span />') . text (moment.duration((d.whenunban)-(d.whenbanned),'seconds').humanize()).addClass("label").addClass("label-important")	.css('margin-right',5));
+				
+				if (!d.b) {
+					entry.append($('<br />'));
+					entry.append($('<span />') . text (moment.duration((d.whenunbanned)-(d.whenbanned),'seconds').humanize()).addClass("label").addClass("label-info")	.css('margin-right',5));
+				
+				}
+
+				
+				entry.append($('<h6 />').text("Reason"));
+				
+				var p = $('<span />').addClass("label").addClass("label-important");
+				
+					p.append(banreason);
+					
+				entry.append(p);
+				entry.append($('<br />'));
+				
+				if (!d.b) {	
+					var p = $('<span />').addClass("label").addClass("label-success");
+						p.append(unbanreason);
+					entry.append(p);
+				}
+				
+			$("#results").append(entry);
+			entry.data=d;
+			banentries[num]=entry;
+		}
+		
+		var loadingthing=$("<b>Loading...</b>");
+		var infopanel = $('<div class="well overlay alert alert-info"></div>');
+		$(document).ready(function() {
+			$("#NeedJS").hide();
+			
+			
+			infopanel.append("Color codes <br/>");
+			infopanel.append($('<span />') . text ("Ban")			.addClass("label").addClass("label-important")	.css('margin-right',5));
+			infopanel.append($('<span />') . text ("Unban")			.addClass("label").addClass("label-success")	.css('margin-right',5));
+			infopanel.append($('<span />') . text ("Actual unban")	.addClass("label").addClass("label-info")		.css('margin-right',5));
+			
+			infopanel.append("<p/>");
+			infopanel.append($('<span />') . text ("Banned")						.addClass("alert").addClass("alert-error")	.css('margin-right',5));
+			infopanel.append($('<span />') . text ("Unbanned")						.addClass("alert").addClass("alert-info")	.css('margin-right',5));
+			infopanel.append($('<span />') . text ("Unbanned, has not rejoined")	.addClass("alert").addClass("alert-warn")	.css('margin-right',5));
+			
+			infopanel.append("<br/>");
+			infopanel.append("<br/>");
+			
+			$("#results").append(infopanel);
+			$("#results").append(loadingthing);
+		 });
+		 
+		$.ajax({
+		 type: 'GET', 
+		 url: "/bans",
+		  cache: true,
+		  dataType: 'json'
+		}).done(function( data ) {
+		  loadingthing.hide();
+		  infopanel.append(data.length+ " bans");
+		  for (var i = 0; i < data.length; i++) {
+			  var ban = data[i];
+			  var bandata = jQuery.parseJSON(ban);
+			  data[i] = bandata;
+		  }
+		  data.sort(function(a,b) { return -(parseFloat(a.whenbanned) - parseFloat(b.whenbanned) ) } );
+		  
+		  var bans = 0;
+		  for (var i = 0; i < data.length; i++) {
+			var bandata = data[i];
+			if (bandata.b && bandata.whenunban>now) bans+=1;
+			AddBan(bandata,i);
+		  }
+		  infopanel.append(" ("+bans+ " still banned)");
+		  
+		}); 
+	</script>
+  </body>
+</html>
