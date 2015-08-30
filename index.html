@@ -55,7 +55,6 @@
 <table id="myTable" class="table table-bordered"> 
 	<thead style="background-color: white;"> 
 		<tr> 
-			<th> </th> 
 			<th>Name</th> 
 			<th>SteamID</th>
 			<th>Banner</th>
@@ -230,16 +229,11 @@
 		
 			var row = $('<tr />');
 			var notunbanned = false;
-			if (d.b) { 
-				if (d.whenunban<now) {
-					row.addClass("danger");
-				} else {
-					notunbanned = true;
-					row.addClass("warning");
-				}
+			if (!d.b) { 
+				row.addClass("success");
 			};
 			
-			row.append($('<td />').text(notunbanned?'↺':d.b?"∅":""));
+			//row.append($('<td />').text(notunbanned?'↺':d.b?"∅":""));
 			
 			row.append($('<td />').text(d.name));
 			
@@ -276,7 +270,7 @@
 			
 				txt = getdate(d.whenunbanned,true);
 				if ( Math.abs((d.whenunban || d.whenunbanned) - (d.whenunbanned || d.whenunban)) < 61 ) {
-					txt = "";
+					txt = "as planned";
 				}
 			}
 			
@@ -455,7 +449,7 @@
 		};
 		
 		// Get our data...
-		$.ajax({ type: 'GET', url: "http://g5.metastruct.net:20080/bans", cache: true, dataType: 'json' }).done(parse_data);
+		$.ajax({ type: 'GET', url: "http://g1.metastruct.net:20080/bans", cache: true, dataType: 'json' }).done(parse_data);
 		
 	</script>
   </body>
