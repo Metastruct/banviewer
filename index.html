@@ -415,7 +415,9 @@
 		var fixh=false;
 		function floatit () {
 			if (!fixh) {
-				new FixedHeader( datatbl );
+				new $.fn.dataTable.FixedHeader( datatbl, {
+				    // options
+				} );
 				fixh = true;
 				$("#floatheader").hide();
 			}
