@@ -252,7 +252,7 @@
 			
 			row.append($('<td />').text(d.numbans || ''));
 			
-			var banlen = (d.whenunban)-(d.whenbanned);
+			var banlen = (d.whenunbanned || d.whenunban)-(d.whenbanned);
 			var td = $('<td />').text(moment.duration(banlen,'seconds').humanize());
 			td.get( 0 ).timestamp = banlen;
 			row.append(td);
@@ -261,7 +261,7 @@
 			td.get( 0 ).timestamp = d.whenbanned;
 			row.append(td); datetoggles.push(td);
 			
-			var td = $('<td />').text(getdate(d.whenunban,true));
+			var td = $('<td />').text(d.whenunbanned?"":getdate(d.whenunban,true));
 			td.get( 0 ).timestamp = d.whenunban;
 			row.append(td); datetoggles.push(td);
 			
