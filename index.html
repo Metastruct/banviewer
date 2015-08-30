@@ -52,11 +52,13 @@
     </div>
 	
 	<!-- error msg-->
+	
+<p class="bg-success">Unbanned</p>
+<p class="bg-danger">Banned</p>
 <div class="" id="results">
 <table id="myTable" class="table table-bordered"> 
 	<thead style="background-color: white;"> 
 		<tr> 
-			<th> </th> 
 			<th>Name</th> 
 			<th>SteamID</th>
 			<th>Banner</th>
@@ -230,17 +232,14 @@
 		function AddBan(d,num) {
 		
 			var row = $('<tr />');
-			var notunbanned = false;
-			if (d.b) { 
-				if (d.whenunban<now) {
-					row.addClass("danger");
-				} else {
-					notunbanned = true;
-					row.addClass("warning");
-				}
-			};
 			
-			row.append($('<td />').text(notunbanned?'↺':d.b?"∅":""));
+			var isbanned = d.b && d.whenunban>now;
+			
+			if (isbanned) {
+				row.addClass("danger");
+			} else {
+				row.addClass("success");
+			}
 			
 			row.append($('<td />').text(d.name));
 			
@@ -277,7 +276,7 @@
 			
 				txt = getdate(d.whenunbanned,true);
 				if ( Math.abs((d.whenunban || d.whenunbanned) - (d.whenunbanned || d.whenunban)) < 61 ) {
-					txt = "";
+					txt = "on unban date";
 				}
 			}
 			
@@ -456,7 +455,7 @@
 		};
 		
 		// Get our data...
-		$.ajax({ type: 'GET', url: "http://g3.metastruct.org:20080/bans", cache: true, dataType: 'json' }).done(parse_data);
+		$.ajax({ type: 'GET', url: "http://g1.metastruct.org:20080/bans", cache: true, dataType: 'json' }).done(parse_data);
 		
 	</script>
   </body>
