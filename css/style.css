@@ -1,0 +1,89 @@
+body {
+	background: #121212;
+	color: #fff;
+	margin: 0;
+	font-family: Roboto, Fira Sans, Cantarell, Oxygen, Ubuntu, Helvetica Neue, sans-serif;
+}
+
+.nb {
+	border-bottom: 1px dashed #fff;
+	background: #121212;
+}
+
+.logo {
+	width: 228px;
+	height: 50px;
+	display: inherit;
+}
+
+h1.title {
+	font-weight: 100;
+	font-style: normal;
+	font-size: 32px;
+	display: inline;
+	margin: 0;
+	margin-right: 16px;
+}
+
+.search {
+	border-radius: 25px;
+    border: #333 1px solid;
+    padding: 12px;
+    font-family: Roboto, Fira Sans, Cantarell, Oxygen, Ubuntu, Helvetica Neue, sans-serif;
+    margin: 32px 0 16px;
+}
+
+.sortable {
+	cursor: pointer;
+}
+
+.banned {
+	padding: 0 15%;
+	margin-top: 64px;
+}
+
+.center {
+	left: 50%;
+	position: absolute;
+	transform: translateX(-50%);
+}
+
+table {
+	border-collapse: collapse;
+}
+
+thead {
+	background: rgb(72, 31, 71);
+}
+
+thead tr th {
+	border-color: #636363;
+}
+
+th, td {
+	padding: 8px;
+	border: 1px solid #333;
+	line-height: 1.4;
+}
+
+.warning {
+	display: block;
+	background: #ffbc00;
+	padding: 12px;
+	color: #333;
+	border: 1px dashed rgba(0, 0, 0, 0.52);
+	margin-bottom: 16px;
+}
+
+.info {
+	margin-bottom: 16px;
+	display: block;
+}
+
+.unbanned {
+	background: rgba(37, 128, 37, 0.32);
+}
+
+a:link{color:inherit}
+a:active{color:inherit}
+a:visited{color:inherit}

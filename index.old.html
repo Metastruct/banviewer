@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+	
+    <title>Banni Viewer</title>
+	
+	<!--
+	
+			<link rel="stylesheet" href="css/theme.blue.css">
+    -->
+    
+	    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/r/dt/dt-1.10.8,b-html5-1.0.1,cr-1.2.0,fh-3.0.0,r-1.0.7,rr-1.0.0/datatables.min.css"/>
+	<link href="css/bootstrap.css" rel="stylesheet">
+
+    <style>
+		a:link{color:inherit}
+		a:active{color:inherit}
+		a:visited{color:inherit}
+			
+	</style>
+
+  </head>
+
+  <body>
+
+    <!-- Static navbar -->
+    <div class="navbar navbar-default navbar-static-top">
+      <div class="">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="pull-left" href="http://metastruct.net"><img style="max-height: 50px" src="http://metastruct.net/img/logo.png" alt="Meta Construct"></a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Banni Viewer</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li id="floatheader"><a href="#" onclick="floatit()">Float Header</a></li>
+            <li class="active" id="toggledate"><a href="#" onclick="toggledate()">Date Format</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+	
+	<!-- error msg-->
+<div class="" id="results">
+<table id="myTable" class="table table-bordered"> 
+	<thead style="background-color: white;"> 
+		<tr> 
+			<th>Name</th> 
+			<th>SteamID</th>
+			<th>Banner</th>
+			<th>Reason</th> 
+			<th>Unban Reason</th>
+			<th>Bans</th> 
+			<th class="sorter-trdate">Length</th> 
+			<th class="sorter-trdate">When Banned</th> 
+			<th class="sorter-trdate">When Unbanning</th> 
+			<th class="sorter-trdate">When Unbanned</th>
+		</tr>
+	</thead>
+	<tbody id="resultstbl">
+	</tbody> 
+</table>
+		 <span id="NeedJS">You need javascript to use this...</span>
+		 
+    </div>
+
+
+	
+    <script src="js/jquery.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/r/dt/dt-1.10.8,b-html5-1.0.1,cr-1.2.0,fh-3.0.0,r-1.0.7,rr-1.0.0/datatables.min.js"></script>
+    <!--<script src="js/jquery.floatThead.min.js"></script>         -->
+    <!--<script src="js/jquery.tablesorter.min.js"></script>        -->
+	<!--<script src="js/jquery.tablesorter.widgets.js"></script>    -->
+    <script src="js/jsbn.js"></script>
+    <script src="js/jsbn2.js"></script>
+    <script src="js/moment.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+	
+	<script>
+	function hsvToRgb(h, s, v){
+		var r, g, b;
+
+		var i = Math.floor(h * 6);
+		var f = h * 6 - i;
+		var p = v * (1 - s);
+		var q = v * (1 - f * s);
+		var t = v * (1 - (1 - f) * s);
+
+		switch(i % 6){
+			case 0: r = v, g = t, b = p; break;
+			case 1: r = q, g = v, b = p; break;
+			case 2: r = p, g = v, b = t; break;
+			case 3: r = p, g = q, b = v; break;
+			case 4: r = t, g = p, b = v; break;
+			case 5: r = v, g = p, b = q; break;
+		}
+
+		return [r * 255, g * 255, b * 255];
+	}	
+	String.prototype.hashCode = function(){
+		var hash = 0, i, char;
+		if (this.length == 0) return hash;
+		for (i = 0, l = this.length; i < l; i++) {
+			char  = this.charCodeAt(i);
+			hash  = ((hash<<5)-hash)+char;
+			hash |= 0; // Convert to 32bit integer
+		}
+		return hash;
+	};	
+	
+	var OFFSET = new BigInteger("0110000100000000",16);
+	var two = new BigInteger("2",10);
+	function ProfileURL(steamid) {
+		var profileurl = "https://steamcommunity.com/profiles/";
+		var data = steamid.split(":");
+		var steamid64 = "ERROR";
+		
+		var sX = 0;
+		var sY = new BigInteger(data[1],10);
+		var sZ = new BigInteger(data[2],10);
+
+		var result = sZ.multiply(two).add(OFFSET).add(sY);
+		
+		steamid64 = result.toString();
+		return profileurl+steamid64;
+	};
+    
+	</script>	
+	
+	<script>
+		/*moment.lang('en', {
+			relativeTime : {
+				future: "in %s",
+				past:   "%s ago",
+				s:  "secs",
+				m:  "a min",
+				mm: "%d mins",
+				h:  "hour",
+				hh: "%d hrs",
+				d:  "day",
+				dd: "%d days",
+				M:  "month",
+				MM: "%d months",
+				y:  "year",
+				yy: "%d yrs"
+			}
+		});*/
+
+		var d = new Date();
+		var now = d.getTime() / 1000;
+		
+		function getdate(sec,since) {
+			//var d = new Date(sec*1000);
+			//return d.toString();
+			//moment(sec.toString(),"X");
+			if (sec>30000000000) return since?"never":"infinite";
+			
+		 	var mom = moment.unix(sec);
+			if (since) 
+				return mom.fromNow();
+			
+			return mom.format("YYYY-MM-DD hh:mm:ss");
+		}
+		function ClickableSteamID(steamid) {
+
+			var sid =  $('<a />');
+				
+				sid . text (steamid.replace("STEAM_",""));
+				sid . attr('href',ProfileURL(steamid));
+				sid . attr('target',"_blank");
+				
+				//sid.css( 'cursor', 'pointer' );
+				
+			return sid;
+		}
+		var banentries = [];
+		function ToggleUnbans(reshow) {
+			for (var i = 0; i < banentries.length; i++) {
+				var entry = banentries[i];
+				var bandata = entry.data;
+				
+				if (!bandata.b || bandata.whenunban<now) {
+					if (reshow) {
+						entry.show();
+					} 
+					else {
+						entry.hide();
+					}
+				}
+			  }
+		}
+		var toggled = false; // Y U HOW DETECT TOGGLE???
+		$('#hideunband').on('click', function (event) {
+			toggled=!toggled;
+			ToggleUnbans(!toggled);
+		});
+		
+		var d_toggle = true;
+		var datetoggles = [];
+		
+		function toggledate() {
+			console.log("nno");
+			$('#toggledate').toggleClass("active");
+			d_toggle = !d_toggle;
+			for (var i = 0; i < datetoggles.length; i++) {
+				var td = datetoggles[i];
+				var timestamp = td.get( 0 ).timestamp;
+				if (timestamp != null) {
+					td.text(getdate(timestamp,d_toggle));
+				};
+
+			};
+		}
+
+
+		function AddBan(d,num) {
+		
+			var row = $('<tr />');
+			var notunbanned = false;
+			if (!d.b) { 
+				row.addClass("success");
+			};
+			
+			//row.append($('<td />').text(notunbanned?'↺':d.b?"∅":""));
+			
+			row.append($('<td />').text(d.name));
+			
+			row.append($('<td />').append(ClickableSteamID(d.sid)));
+			
+			var td = $('<td />');
+				var hash = d.bannersid.hashCode();
+				var hue = (hash*0.1)%360;
+				td.css("backgroundColor", "hsl("+hue+",99%,85%)");
+				row.append(td.append(ClickableSteamID(d.bannersid)));
+				
+			
+			row.append($('<td />').text(d.banreason));
+			
+			row.append($('<td />').text(d.unbanreason));
+			
+			row.append($('<td />').text(d.numbans || ''));
+			
+			var banlen = (d.whenunbanned || d.whenunban)-(d.whenbanned);
+			var td = $('<td />').text(moment.duration(banlen,'seconds').humanize());
+			td.get( 0 ).timestamp = banlen;
+			row.append(td);
+			
+			var td = $('<td />').text(getdate(d.whenbanned,true));
+			td.get( 0 ).timestamp = d.whenbanned;
+			row.append(td); datetoggles.push(td);
+			
+			var td = $('<td />').text(d.whenunbanned?"":getdate(d.whenunban,true));
+			td.get( 0 ).timestamp = d.whenunban;
+			row.append(td); datetoggles.push(td);
+			
+			var txt = ""
+			if (!d.b) {
+			
+				txt = getdate(d.whenunbanned,true);
+				if ( Math.abs((d.whenunban || d.whenunbanned) - (d.whenunbanned || d.whenunban)) < 61 ) {
+					txt = "as planned";
+				}
+			}
+			
+			var td = $('<td />').text(txt);
+			td.get( 0 ).timestamp = d.whenunbanned;
+			row.append(td); datetoggles.push(td);
+			
+			
+					/*
+				var td = 
+				
+				
+				var col = "alert-info"
+				
+				if (d.b) {
+					col	= "alert-danger";
+					if (d.whenunban<now) 
+					 col = "alert-warn";
+				}
+				
+
+					var h4 = $('<h4 />');
+						h4.append(ClickableSteamID(d.sid).text(d.name));
+					header.append(h4);
+					
+					header.append(ClickableSteamID(d.sid));
+					
+					header.append($('<span />').text(" (Banned by "));
+						
+						var bannersid = ClickableSteamID(d.bannersid);
+						header.append(bannersid);
+					
+						header.append($('<span />').text(")"));
+				entry.append(header);
+				
+				entry.append($('<span />') . text (getdate(d.whenbanned))		.addClass("label").addClass("label-important")	.css('margin-right',5));
+				entry.append($('<span />') . text (getdate(d.whenbanned,true))		.addClass("label").addClass("label-important")	.css('margin-right',5));
+				entry.append($('<br />'));
+				entry.append($('<span />') . text (getdate(d.whenunban))		.addClass("label").addClass("label-success").css('margin-right',5));
+				entry.append($('<span />') . text (getdate(d.whenunban,true))		.addClass("label").addClass("label-success").css('margin-right',5));
+				entry.append($('<br />'));
+				if (!d.b) entry.append($('<span />') . text (getdate(d.whenunbanned))	.addClass("label").addClass("label-info")	.css('margin-right',5));
+				if (!d.b) entry.append($('<span />') . text (getdate(d.whenunbanned,true))	.addClass("label").addClass("label-info")	.css('margin-right',5));
+				
+			
+				entry.append($('<h6 />').text("Length"));
+				
+				entry.append($('<span />') . text (moment.duration((d.whenunban)-(d.whenbanned),'seconds').humanize()).addClass("label").addClass("label-important")	.css('margin-right',5));
+				
+				if (!d.b) {
+					entry.append($('<br />'));
+					entry.append($('<span />') . text (moment.duration((d.whenunbanned)-(d.whenbanned),'seconds').humanize()).addClass("label").addClass("label-info")	.css('margin-right',5));
+				
+				}
+
+				
+				entry.append($('<h6 />').text("Reason"));
+				
+				var p = $('<span />').addClass("label").addClass("label-important");
+				
+					p.append(banreason);
+					
+				entry.append(p);
+				entry.append($('<br />'));
+				
+				if (!d.b) {	
+					var p = $('<span />').addClass("label").addClass("label-success");
+						p.append(unbanreason);
+					entry.append(p);
+				}
+			*/
+			
+			
+			
+			
+			$("#resultstbl").append(row);
+			
+			row.data = d;
+			banentries[num]=row;
+		}
+		
+		var loadingthing=$("<b>Loading...</b>");
+		var infopanel = $('<div class="well overlay alert alert-info"></div>');
+		$(document).ready(function() {
+			$("#NeedJS").hide();
+			$("#results").append(loadingthing);
+		 });
+		 
+		 
+		 /*
+		$.tablesorter.addParser({
+			// set a unique id
+		  id: 'trdate',
+		  is: function(s, table, cell) {
+			return false;
+		  },
+		  format: function(s, table, cell, cellIndex) {
+			// format your data for normalization
+			return cell.timestamp?cell.timestamp:0;
+		  },
+		  // set type, either numeric or text
+		  type: 'numeric'
+		});
+		*/
+		
+		$.fn.dataTable.ext.order['dom-tstamp'] = function  ( settings, col )
+		{
+			return this.api().column( col, {order:'index'} ).nodes().map( function ( td, i ) {
+				var val = td.get(0).timestamp;
+				return val?val:0;
+			} );
+		}
+		
+		var datatbl;
+		function make_sortable() {
+			/*$("#myTable").tablesorter({
+				//theme : 'grey',
+				widgets: [ "resizable" ]
+			});
+			*/
+			datatbl = $("#myTable").dataTable({
+				"sDom": 'Rlfrtip',
+				"bPaginate": false,
+				"aaSorting": [[ 0, "asc" ]],
+				"aoColumns": [
+					null,
+					null,
+					null,
+					null,
+					null,
+					null,
+					{ "sSortDataType": "dom-tstamp", "sType": "numeric" },
+					{ "sSortDataType": "dom-tstamp", "sType": "numeric" },
+					{ "sSortDataType": "dom-tstamp", "sType": "numeric" },
+					{ "sSortDataType": "dom-tstamp", "sType": "numeric" }
+				]
+			});
+			
+			
+		};
+		
+		var fixh=false;
+		function floatit () {
+			if (!fixh) {
+				new $.fn.dataTable.FixedHeader( datatbl, {
+				    // options
+				} );
+				fixh = true;
+				$("#floatheader").hide();
+			}
+		}
+		
+		
+		
+		function parse_data( data ) {
+			
+			loadingthing.hide();
+			
+			infopanel.append(data.length+ " bans");
+			for (var i = 0; i < data.length; i++) {
+			  var ban = data[i];
+			  var bandata = ban;
+			  data[i] = bandata;
+			}
+			data.sort(function(a,b) { return -(parseFloat(a.whenbanned) - parseFloat(b.whenbanned) ) } );
+
+			var bans = 0;
+			for (var i = 0; i < data.length; i++) {
+			var bandata = data[i];
+			if (bandata.b && bandata.whenunban>now) bans+=1;
+			AddBan(bandata,i);
+			}
+			infopanel.append(" ("+bans+ " still banned)");
+			
+			make_sortable();
+		};
+		
+		// Get our data...
+		$.ajax({ type: 'GET', url: "http://g1.metastruct.net:20080/bans", cache: true, dataType: 'json' }).done(parse_data);
+		
+	</script>
+  </body>
+</html>
