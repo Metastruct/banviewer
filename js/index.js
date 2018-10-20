@@ -140,12 +140,8 @@ $(function() {
 		nodes = nodes.sort(function(a, b){
 			let as = a[0].childNodes[x].innerHTML.toLowerCase(), 
 				bs = b[0].childNodes[x].innerHTML.toLowerCase()
-			if(srt ? as < bs 
-				   : as > bs) 
-				return -1;
-			if(srt ? as > bs 
-				   : as < bs) 
-				return 1;
+			if(srt ? as < bs : as > bs) return -1;
+			if(srt ? as > bs : as < bs) return 1;
 
 			return 0;
 		})

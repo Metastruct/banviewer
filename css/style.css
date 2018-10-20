@@ -89,9 +89,9 @@ a:active{color:inherit}
 a:visited{color:inherit}
 
 .sortable[data-sorting=true]::after {
-	content: ' (a-z)';
+	content: ' ▲';
 }
 
 .sortable[data-sorting=false]::after {
-	content: ' (z-a)';
+	content: ' ▼';
 }
