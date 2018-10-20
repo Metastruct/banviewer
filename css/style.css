@@ -87,3 +87,11 @@ th, td {
 a:link{color:inherit}
 a:active{color:inherit}
 a:visited{color:inherit}
+
+.sortable[data-sorting=true]::after {
+	content: ' (a-z)';
+}
+
+.sortable[data-sorting=false]::after {
+	content: ' (z-a)';
+}

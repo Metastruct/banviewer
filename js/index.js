@@ -2,7 +2,6 @@ $(function() {
 	$(".warning").remove();
 
 	let nodes = [];
-	let srt = true;
 
 	function hsvToRgb(h, s, v){
 		var r, g, b;
@@ -120,21 +119,44 @@ $(function() {
 		})
 	}
 
-	function sort(a) {
-		resultsElement.empty()
-		srt = a
+	function findChildId(elem) {
+		let id;
+		let pen = Array.prototype.slice.call(elem.parentNode.children)
 
-		nodes = nodes.sort(function(a, b){
-			if(srt ? a[0].childNodes[0].innerHTML < b[0].childNodes[0].innerHTML : a[0].childNodes[0].innerHTML > b[0].childNodes[0].innerHTML) return -1;
-			if(srt ? a[0].childNodes[0].innerHTML > b[0].childNodes[0].innerHTML : a[0].childNodes[0].innerHTML < b[0].childNodes[0].innerHTML) return 1;
-			return 0;
+		pen.forEach((v,k) => {
+			if(v.innerHTML == elem.innerHTML) {
+				id = k
+			}
 		})
 
-		nodes.forEach(a => resultsElement.append(a))
+		return id
 	}
 
 	$('.sortable').click(function() {
-		sort(!srt)
+		resultsElement.empty()
+		let srt = $(this).attr('data-sorting') != "true"
+		let x = findChildId(this)
+
+		nodes = nodes.sort(function(a, b){
+			let as = a[0].childNodes[x].innerHTML.toLowerCase(), 
+				bs = b[0].childNodes[x].innerHTML.toLowerCase()
+			if(srt ? as < bs 
+				   : as > bs) 
+				return -1;
+			if(srt ? as > bs 
+				   : as < bs) 
+				return 1;
+
+			return 0;
+		})
+
+		Array.prototype.slice.call(this.parentNode.children).forEach(function(v) {
+			$(v).removeAttr('data-sorting')
+		})
+
+		$(this).attr('data-sorting', srt.toString())
+
+		nodes.forEach(a => resultsElement.append(a))
 	})
 
 	$('.search').bind('input propertychange', function() {
