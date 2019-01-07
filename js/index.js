@@ -53,6 +53,9 @@ $(function() {
 	};
 
 	var resultsElement = $('.results')
+	var tableElement = $('.table')
+
+	tableElement.fadeOut(0);
 
 	function parseDate(a) {
 		let mom = moment.unix(a)
@@ -111,6 +114,9 @@ $(function() {
 
 	function parse_data(data) {
 		$('.info').text(`${data.length} bans total.`)
+		$('.lds-css').remove();
+
+		tableElement.fadeIn(1000);
 
 		data.forEach(function(obj) {
 			let node = createResultNode(obj);
@@ -168,6 +174,11 @@ $(function() {
 				$(e).fadeOut(500);
 			})
 		}
+	});
+
+	$(".navbar-burger").click(function() {
+		$(".navbar-burger").toggleClass("is-active");
+		$(".navbar-menu").toggleClass("is-active");
 	});
 
 	$.ajax({ type: 'GET', url: "https://g1cf.metastruct.net/bans", cache: true, dataType: 'json' }).done(parse_data);

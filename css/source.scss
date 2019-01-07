@@ -1,0 +1,98 @@
+@charset "utf-8";
+@import url('https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i');
+
+$family-sans-serif: "Roboto", sans-serif;
+$primary: #973ee0;
+$info: #693693;
+$link: #be8ee5;
+$code: #50cc3d;
+
+//watch this shit lol
+$black:         #e2e2e2;
+$black-bis:     #c9c9c9;
+$black-ter:     #b5b5b5;
+$grey-darker:   #a0a0a0;
+$grey-dark:     #8e8e8e;
+$grey:          #7a7a7a;
+$grey-light:    #666666;
+$grey-lighter:  #545454;
+$white-ter:     #3d3d3d;
+$white-bis:     #212121;
+$white:         #161616;
+
+@import "../node_modules/bulma/bulma.sass";
+
+.table-wrapper {
+    overflow: auto;
+    border: 1px $grey-lighter solid;
+}
+
+@keyframes lds-spinner {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+@-webkit-keyframes lds-spinner {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+.lds-spinner {
+    position: relative;
+}
+
+.lds-spinner div {
+    left: 94px;
+    top: 41px;
+    position: absolute;
+    -webkit-animation: lds-spinner linear 1s infinite;
+    animation: lds-spinner linear 1s infinite;
+    background: #afafaf;
+    width: 12px;
+    height: 38px;
+    border-radius: 40%;
+    -webkit-transform-origin: 6px 59px;
+    transform-origin: 6px 59px;
+}
+
+@for $i from 1 through 12 {
+    .lds-spinner div:nth-child(#{$i}) {
+        -webkit-transform: rotate(30deg * $i);
+        transform: rotate(30deg * $i);
+        -webkit-animation-delay: -0.083333333333333s * ($i - 1);
+        animation-delay: -0.083333333333333s * ($i - 1);
+    }
+}
+
+.lds-spinner {
+    width: 100px !important;
+    height: 100px !important;
+    -webkit-transform: translate(-50px, -50px) scale(.5) translate(50px, 50px);
+    transform: translate(-50px, -50px) scale(.5) translate(50px, 50px);
+    margin: 0 auto;
+}
+
+.info {
+    margin-bottom: 16px;
+}
+
+.table {
+    width: 100%;
+}
+
+@media screen and (max-width: 1087px) {
+    .navbar-menu {
+        box-shadow: none;
+        border-bottom: 1px solid $white-bis;
+    }
+}

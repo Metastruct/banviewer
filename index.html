@@ -7,39 +7,66 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta charset="UTF-8">
 
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Oxygen:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i">
+	<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+
 	<link rel="icon" href="img/banni.png" type="image/png">
-	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/bulma-mod.css">
 </head>
 
 <body>
-	<div class="nb">
-		<img class="logo" src="https://metastruct.net/img/logo.png">
-	</div>
+	<nav class="navbar" role="navigation" aria-label="main navigation">
+		<div class="container">
+			<div class="navbar-brand">
+				<a class="navbar-item" href="https://metastruct.net">
+					<img src="https://metastruct.net/img/logo.png" alt="Bulma: Free, open source, & modern CSS framework based on Flexbox" width="112" height="28">
+				</a>
+			
+				<a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+					<span aria-hidden="true"></span>
+					<span aria-hidden="true"></span>
+					<span aria-hidden="true"></span>
+				</a>
+			</div>
 
-	<div class="banned">
-		<h1 class="title">Banni Viewer</h1>
-		<input type="textarea" placeholder="Search..." class="search">
-		<span class="warning">Browser must have JavaScript enabled, else the page will not load.</span>
-		<span class="info">loading...</span>
-		<table class="tbl">
-			<thead>
-				<tr>
-					<th class="sortable">Name</th>
-					<th class="sortable">SteamID</th>
-					<th class="sortable">Banner</th>
-					<th class="sortable">Reason</th>
-					<th class="sortable">Unban Reason</th>
-					<th class="sortable">Length</th> 
-					<th class="sortable">When Banned</th> 
-					<th class="sortable">When Unbanning</th> 
-					<th class="sortable">When Unbanned</th>
-				</tr>
-			</thead>
-			<tbody class="results">
-				
-			</tbody>
-		</table>
+			<div class="navbar-menu">
+				<div class="navbar-start">
+					<a class="navbar-item">
+							<input type="text" placeholder="Search..." class="search input is-rounded">
+					</a>
+				</div>
+			</div>
+		</div>
+	</nav>
+
+	<section class="section">
+		<div class="container">
+			<div class="notification is-warning warning"><i class="fas fa-exclamation-triangle"></i> Browser must have JavaScript enabled, else the page will not load.</div>
+			<p class="subtitle is-3">Banni Viewer</p>
+			<span class="tag is-primary info">Loading...</span>
+			<div class="table-wrapper">
+				<table class="table is-striped is-bordered">
+					<thead>
+						<tr>
+							<th class="sortable">Name</th>
+							<th class="sortable">SteamID</th>
+							<th class="sortable">Banner</th>
+							<th class="sortable">Reason</th>
+							<th class="sortable">Unban Reason</th>
+							<th class="sortable">Length</th> 
+							<th class="sortable">When Banned</th> 
+							<th class="sortable">When Unbanning</th> 
+							<th class="sortable">When Unbanned</th>
+						</tr>
+					</thead>
+					<tbody class="results">
+							<div class="lds-css ng-scope">
+								<div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+								</div>
+							</div>
+					</tbody>
+				</table>
+			</div>
+		</div>
 	</div>
 
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>

@@ -1,0 +1,24 @@
+{
+  "name": "banviewer",
+  "version": "1.0.0",
+  "description": "Online ban viewer frontend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node-sass -x --output-style compressed css/source.scss css/bulma-mod.css"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Metastruct/banviewer.git"
+  },
+  "author": "Metastruct",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Metastruct/banviewer/issues"
+  },
+  "homepage": "https://github.com/Metastruct/banviewer#readme",
+  "devDependencies": {
+    "bulma": "^0.7.2",
+    "node-sass": "^4.11.0"
+  }
+}
