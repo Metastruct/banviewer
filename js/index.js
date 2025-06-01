@@ -181,5 +181,5 @@ $(function() {
 		$(".navbar-menu").toggleClass("is-active");
 	});
 
-	$.ajax({ type: 'GET', url: "https://g1cf.metastruct.net/bans", cache: true, dataType: 'json' }).done(parse_data);
+	$.ajax({ type: 'GET', url: "https://g2cf.metastruct.net/bans", cache: true, dataType: 'json' }).done(parse_data);
 })
